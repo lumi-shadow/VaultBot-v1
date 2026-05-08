@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
 import { ActionCard } from "@/components/ActionCard";
+import { AgentIdentity } from "@/components/AgentIdentity";
+import { TickCountdown } from "@/components/TickCountdown";
+import { TreasuryPanel } from "@/components/TreasuryPanel";
 import {
   fetchJobs,
   subscribeJobEvents,
@@ -47,69 +50,69 @@ export default function DashboardPage() {
     };
   }, []);
 
-  if (error) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border border-danger/20 bg-danger/5 p-6"
-      >
-        <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-danger" />
-          <div>
-            <h3 className="font-medium text-danger">Connection Error</h3>
-            <p className="mt-1 text-sm text-danger/80">
-              Could not reach prover server: {error}
-            </p>
-            <p className="mt-2 text-xs text-muted">
-              Make sure the mock prover is running: <code className="rounded bg-muted/10 px-1 py-0.5">node mock-prover.mjs</code>
-            </p>
+  return (
+    <main className="space-y-10">
+      {/* Always-on header strip — agent identity, live treasury, next tick. */}
+      <AgentIdentity />
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <TreasuryPanel />
+        </div>
+        <TickCountdown jobs={jobs ?? []} />
+      </div>
+
+      {error ? (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl border border-danger/20 bg-danger/5 p-6"
+        >
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-danger" />
+            <div>
+              <h3 className="font-medium text-danger">Connection Error</h3>
+              <p className="mt-1 text-sm text-danger/80">
+                Could not reach prover server: {error}
+              </p>
+              <p className="mt-2 text-xs text-muted">
+                Make sure the mock prover is running: <code className="rounded bg-muted/10 px-1 py-0.5">node mock-prover.mjs</code>
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      ) : !jobs ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="flex items-center gap-3">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-muted" />
+            <p className="text-sm text-muted">Loading actions…</p>
           </div>
         </div>
-      </motion.div>
-    );
-  }
-
-  if (!jobs) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="flex items-center gap-3">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-muted" />
-          <p className="text-sm text-muted">Loading actions…</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (jobs.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-border bg-panel p-12 text-center shadow-sm"
-      >
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted/10">
-          <Clock className="h-8 w-8 text-muted" />
-        </div>
-        <h2 className="mt-6 text-xl font-medium">No actions yet</h2>
-        <p className="mt-2 text-sm text-muted">
-          When VaultBot ticks, the verify-then-execute trace will appear here in real time.
-        </p>
-      </motion.div>
-    );
-  }
-
-  return (
-    <main className="space-y-12">
-      <StatsSection jobs={jobs} />
-      
-      <motion.div layout className="grid gap-6 lg:grid-cols-2">
-        <AnimatePresence mode="popLayout">
-          {jobs.map((j) => (
-            <ActionCard key={j.job_id} job={j} />
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      ) : jobs.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-2xl border border-border bg-panel p-12 text-center shadow-sm"
+        >
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted/10">
+            <Clock className="h-8 w-8 text-muted" />
+          </div>
+          <h2 className="mt-6 text-xl font-medium">No actions yet</h2>
+          <p className="mt-2 text-sm text-muted">
+            When VaultBot ticks, the verify-then-execute trace will appear here in real time.
+          </p>
+        </motion.div>
+      ) : (
+        <>
+          <StatsSection jobs={jobs} />
+          <motion.div layout className="grid gap-6 lg:grid-cols-2">
+            <AnimatePresence mode="popLayout">
+              {jobs.map((j) => (
+                <ActionCard key={j.job_id} job={j} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </>
+      )}
     </main>
   );
 }

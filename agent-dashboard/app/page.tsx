@@ -1,17 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { 
-  ArrowRight, 
-  Shield, 
-  Zap, 
-  Eye, 
+import {
+  ArrowRight,
+  Shield,
+  Zap,
+  Eye,
   CheckCircle2,
   Sparkles,
   Lock,
   TrendingUp
 } from "lucide-react";
+
+import { fetchJobs, type JobStatus } from "@/lib/proverClient";
 
 export default function LandingPage() {
   return (
@@ -301,25 +304,11 @@ export default function LandingPage() {
         <div className="rounded-2xl border border-border bg-panel p-12">
           <div className="grid gap-12 md:grid-cols-2">
             <div>
-              <h3 className="text-xl font-medium">Live Metrics</h3>
-              <ul className="mt-4 space-y-3 text-sm text-muted">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                  <span>Total proofs verified on-chain</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                  <span>Active proofs in flight</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                  <span>Success rate and error tracking</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                  <span>Real-time SSE updates</span>
-                </li>
-              </ul>
+              <h3 className="text-xl font-medium">Live metrics</h3>
+              <p className="mt-2 text-xs text-muted">
+                Pulled live from the prover server every page load.
+              </p>
+              <LiveMetrics />
             </div>
 
             <div>
@@ -546,5 +535,79 @@ function ProofBadge({ text }: { text: string }) {
     <div className="rounded-xl border border-border bg-panel p-4 text-center text-sm text-muted">
       {text}
     </div>
+  );
+}
+
+/**
+ * Live snapshot of the prover-server's job feed. Replaces the
+ * previously hardcoded "Total proofs verified on-chain / Active /
+ * Success rate" bullets with real counters. Renders zeroes if the
+ * prover is unreachable (typically: the user is hitting the deployed
+ * site without a tunnel to a private prover).
+ */
+function LiveMetrics() {
+  const [jobs, setJobs] = useState<JobStatus[] | null>(null);
+  const [reachable, setReachable] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchJobs()
+      .then((list) => {
+        if (!cancelled) setJobs(list);
+      })
+      .catch(() => {
+        if (!cancelled) setReachable(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const verified = jobs?.filter((j) => j.phase === "verified_onchain").length ?? 0;
+  const inFlight =
+    jobs?.filter(
+      (j) =>
+        j.phase === "queued" || j.phase === "proving" || j.phase === "submitting",
+    ).length ?? 0;
+  const failed = jobs?.filter((j) => j.phase === "failed").length ?? 0;
+  const total = (jobs?.length ?? 0) || 1;
+  const successPct = ((verified / total) * 100).toFixed(1);
+
+  return (
+    <ul className="mt-4 space-y-3 text-sm text-muted">
+      <li className="flex items-baseline justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+          Verified on-chain
+        </span>
+        <span className="font-mono text-ink">{verified}</span>
+      </li>
+      <li className="flex items-baseline justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+          In flight
+        </span>
+        <span className="font-mono text-ink">{inFlight}</span>
+      </li>
+      <li className="flex items-baseline justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+          Success rate
+        </span>
+        <span className="font-mono text-ink">{successPct}%</span>
+      </li>
+      <li className="flex items-baseline justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+          Failed
+        </span>
+        <span className="font-mono text-ink">{failed}</span>
+      </li>
+      {!reachable && (
+        <li className="text-xs text-muted/60">
+          (prover unreachable from this browser; counters show 0)
+        </li>
+      )}
+    </ul>
   );
 }
