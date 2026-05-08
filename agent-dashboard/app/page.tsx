@@ -36,9 +36,10 @@ export default function LandingPage() {
           </h1>
           
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted">
-            VaultBot is a verifiable AI treasury agent for Solana that makes mathematically 
-            provable decisions about token swaps. Every action is gated by a 30-layer Groth16 
-            zero-knowledge proof, ensuring complete transparency and auditability.
+            VaultBot is an autonomous Solana treasury agent powered by Microsoft
+            BitNet b1.58 2B4T. Every decision is proved layer-by-layer with the
+            Tachyon Binius zkSNARK stack, wrapped to a 256-byte BN254 Groth16
+            proof, and verified on Solana before any action is allowed to fire.
           </p>
 
           <div className="mt-10 flex items-center justify-center gap-4">
@@ -58,10 +59,11 @@ export default function LandingPage() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mx-auto mt-20 grid max-w-3xl grid-cols-3 gap-8">
-            <StatItem value="30" label="ZK Proof Layers" />
-            <StatItem value="2B" label="Model Parameters" />
-            <StatItem value="~90s" label="Verification Time" />
+          <div className="mx-auto mt-20 grid max-w-3xl grid-cols-4 gap-6">
+            <StatItem value="2.4B" label="Model Parameters" />
+            <StatItem value="~17s" label="Base Prove (4× B200)" />
+            <StatItem value="256B" label="Per-Layer Proof Size" />
+            <StatItem value="30" label="On-Chain Layer Proofs" />
           </div>
         </motion.div>
       </section>
@@ -78,9 +80,9 @@ export default function LandingPage() {
             icon={<Shield className="h-6 w-6" />}
             title="Mathematically Verifiable AI"
             items={[
-              "Every decision is backed by cryptographic proof",
-              "30-layer Groth16 ZK proofs verified on-chain",
-              "BitNet b1.58 2B4T neural network architecture"
+              "Every decision is backed by a cryptographic proof",
+              "30-layer Groth16 ZK proofs verified on Solana",
+              "Microsoft BitNet b1.58 2B4T (2.4 B params, ternary weights)"
             ]}
           />
           <ValuePropCard
@@ -188,31 +190,105 @@ export default function LandingPage() {
           <SpecCard
             title="AI Model"
             specs={[
-              { label: "Architecture", value: "BitNet b1.58 2B4T" },
-              { label: "Parameters", value: "2 billion (4-bit)" },
-              { label: "Specialization", value: "Treasury management" },
-              { label: "Training", value: "Market data & strategies" }
+              { label: "Architecture", value: "Microsoft BitNet b1.58 2B4T" },
+              { label: "Parameters", value: "2.4 billion (1.58-bit ternary)" },
+              { label: "Pretraining", value: "4 T tokens (generic web text)" },
+              { label: "Inference profile", value: "instruction-tuned chat template" }
             ]}
           />
           <SpecCard
             title="Proof System"
             specs={[
-              { label: "Type", value: "Groth16 on BN254" },
-              { label: "Layers", value: "30 proofs" },
-              { label: "Size", value: "256 bytes per layer" },
-              { label: "Infrastructure", value: "Tachyon ZK" }
+              { label: "Base prover", value: "Tachyon Binius (binary tower fields, FRI)" },
+              { label: "Wrap", value: "dGKR + Phase 14 → BN254 Groth16" },
+              { label: "Per-layer proof size", value: "256 bytes" },
+              { label: "Quantum-resistant base", value: "Yes (hash-based commitments)" }
             ]}
           />
           <SpecCard
             title="Blockchain"
             specs={[
               { label: "Network", value: "Solana devnet" },
-              { label: "Verifier", value: "6FkUvt...6DgK" },
-              { label: "Agent Gate", value: "2M4KyG...2GB2" },
-              { label: "Finality", value: "On-chain ledger" }
+              { label: "Verifier program", value: "6FkUvt…m4bcc" },
+              { label: "VK account (frozen)", value: "8qgSUq…c9ag" },
+              { label: "Agent gate program", value: "2M4KyG…2GB2" }
             ]}
           />
         </div>
+      </section>
+
+      {/* Competitive Context */}
+      <section>
+        <div className="mb-12 text-center">
+          <p className="text-xs uppercase tracking-wider text-muted">— Comparison</p>
+          <h2 className="mt-2 text-4xl font-normal">Why Tachyon.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted">
+            Other ZK-LLM stacks either prove at scale (zkLLM, zkGPT) or wrap to
+            on-chain-friendly Groth16 (RISC Zero, SP1 zkVMs) — but never both.
+            Tachyon is the only published system that proves a billion-parameter
+            LLM AND lands a 256-byte proof on a public blockchain in one
+            workflow.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto rounded-2xl border border-border bg-panel">
+          <table className="min-w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-xs uppercase tracking-wider text-muted">
+                <th className="px-4 py-3">System</th>
+                <th className="px-4 py-3">LLM-scale prove</th>
+                <th className="px-4 py-3">256-B Groth16</th>
+                <th className="px-4 py-3">On-chain settlement</th>
+                <th className="px-4 py-3">Quantum-resistant base</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr className="bg-success/5">
+                <td className="px-4 py-3 font-medium">Tachyon (this stack)</td>
+                <td className="px-4 py-3 text-success">Yes (2.4 B in ~17 s)</td>
+                <td className="px-4 py-3 text-success">Yes</td>
+                <td className="px-4 py-3 text-success">Yes (Solana)</td>
+                <td className="px-4 py-3 text-success">Yes (Binius FRI)</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">zkLLM (CCS 2024)</td>
+                <td className="px-4 py-3 text-muted">Yes (13 B in ~15 min)</td>
+                <td className="px-4 py-3 text-danger">No (~200 KB)</td>
+                <td className="px-4 py-3 text-danger">No</td>
+                <td className="px-4 py-3 text-danger">No (BLS12-381)</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">zkGPT</td>
+                <td className="px-4 py-3 text-muted">Partial (attention-only)</td>
+                <td className="px-4 py-3 text-danger">No</td>
+                <td className="px-4 py-3 text-danger">No</td>
+                <td className="px-4 py-3 text-danger">No</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">RISC Zero / SP1 zkVMs</td>
+                <td className="px-4 py-3 text-danger">No (RISC-V emulation cap)</td>
+                <td className="px-4 py-3 text-success">Yes</td>
+                <td className="px-4 py-3 text-success">Partial (ETH)</td>
+                <td className="px-4 py-3 text-success">Yes (STARK)</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3">Modulus Labs / EZKL (Halo2)</td>
+                <td className="px-4 py-3 text-muted">Toy LLMs only</td>
+                <td className="px-4 py-3 text-danger">No (KZG)</td>
+                <td className="px-4 py-3 text-success">Partial (ETH verifier)</td>
+                <td className="px-4 py-3 text-danger">No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-4 text-xs text-muted">
+          Headline numbers are from each project's own published benchmarks.
+          Tachyon's 17 s base-prove number is for the engineering_smoke profile
+          (~50-bit security, demo). The frontier100 profile (~100-bit) lands at
+          ~3× the prove time and is still ~3× faster per parameter than the
+          published SOTA.
+        </p>
       </section>
 
       {/* Dashboard Features */}
