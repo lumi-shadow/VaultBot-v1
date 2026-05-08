@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Zap, Lock, Code, Users, Rocket } from "lucide-react";
+import { Shield, Lock, Code, Users } from "lucide-react";
 
 export default function DocsPage() {
   return (
@@ -25,55 +25,53 @@ export default function DocsPage() {
         <h2 className="text-3xl font-normal">Technical Architecture</h2>
         <div className="mt-6 rounded-2xl border border-border bg-panel p-8">
           <div className="space-y-4 font-mono text-sm">
-            <ArchitectureStep text="User Request" />
+            <ArchitectureStep text="User request" />
             <ArchitectureArrow />
-            <ArchitectureStep text="BitNet Inference (2B4T model)" />
+            <ArchitectureStep text="BitNet inference (2.4 B params)" />
             <ArchitectureArrow />
-            <ArchitectureStep text="Hash I/O → Derive session_id" />
+            <ArchitectureStep text="Tachyon proves all 30 layers" />
             <ArchitectureArrow />
-            <ArchitectureStep text="Generate 30 Groth16 Proofs" />
+            <ArchitectureStep text="30 Groth16 proofs land on Solana" />
             <ArchitectureArrow />
-            <ArchitectureStep text="Submit to Solana (layer by layer)" />
+            <ArchitectureStep text="SessionLedger finalised on-chain" />
             <ArchitectureArrow />
-            <ArchitectureStep text="Finalize SessionLedger" />
-            <ArchitectureArrow />
-            <ArchitectureStep text="Execute Swap (Jupiter CPI)" />
+            <ArchitectureStep text="Gated CPI fires (Jupiter swap planned)" />
           </div>
         </div>
       </section>
 
       {/* Security & Trust */}
       <section>
-        <h2 className="text-3xl font-normal">Security & Trust</h2>
-        
+        <h2 className="text-3xl font-normal">Security &amp; Trust</h2>
+
         <div className="mt-8 space-y-8">
           <SecurityCard
             icon={<Shield className="h-5 w-5" />}
-            title="Cryptographic Guarantees"
+            title="Cryptographically proven"
             items={[
-              "BN254 elliptic curve (128-bit security)",
-              "Groth16 proof system (industry standard)",
-              "Keccak256 hashing for I/O commits"
+              "Every inference is proven layer-by-layer using zero-knowledge proofs",
+              "30 proofs verified on Solana; chain-of-custody enforced on-chain",
+              "Base prover is quantum-resistant — built on hash-based commitments"
             ]}
           />
-          
+
           <SecurityCard
             icon={<Lock className="h-5 w-5" />}
-            title="On-Chain Verification"
+            title="Verify, then execute"
             items={[
-              "Every proof verified by Solana validators",
-              "No off-chain trust assumptions",
-              "Immutable audit trail"
+              "Agent action only fires after on-chain proof finalisation",
+              "Gate program rejects any mismatch between intent and proof",
+              "Anyone can audit the full proof chain on Solana"
             ]}
           />
-          
+
           <SecurityCard
             icon={<Code className="h-5 w-5" />}
-            title="Open Source"
+            title="Open & honest"
             items={[
-              "Dashboard code available on GitHub",
-              "Verifier program auditable on-chain",
-              "API documentation publicly accessible"
+              "Apache-2.0 licensed; verifier program live + frozen on devnet",
+              "Demo runs at 50-bit security; production target is 100-bit",
+              "Active research direction: aggregating all 30 proofs into one"
             ]}
           />
         </div>
@@ -82,27 +80,27 @@ export default function DocsPage() {
       {/* Performance Metrics */}
       <section>
         <h2 className="text-3xl font-normal">Performance Metrics</h2>
-        
+
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <MetricCard
-            label="Inference Time"
-            value="~200ms"
-            description="BitNet forward pass"
+            label="Inference"
+            value="~150ms"
+            description="BitNet on B200"
           />
           <MetricCard
-            label="Proof Generation"
+            label="ZK proof"
+            value="~40s"
+            description="30 layers, 4 GPUs"
+          />
+          <MetricCard
+            label="Solana settle"
             value="~60s"
-            description="30 layers"
+            description="30 layer txs + finalize"
           />
           <MetricCard
-            label="On-Chain Submission"
-            value="~30s"
-            description="Layer by layer"
-          />
-          <MetricCard
-            label="Total Latency"
-            value="~90s"
-            description="Queued → verified"
+            label="Total"
+            value="~120s"
+            description="Request → verified"
           />
         </div>
       </section>
@@ -110,27 +108,27 @@ export default function DocsPage() {
       {/* Integration Options */}
       <section>
         <h2 className="text-3xl font-normal">Integration Options</h2>
-        
+
         <div className="mt-8 grid gap-8 md:grid-cols-2">
           <IntegrationCard
             icon={<Code className="h-5 w-5" />}
-            title="For Developers"
+            title="For developers"
             items={[
-              "REST API for triggering inferences",
-              "SSE stream for real-time updates",
-              "TypeScript SDK included",
-              "Comprehensive API documentation"
+              "Simple REST API for triggering and tracking inferences",
+              "Real-time updates via Server-Sent Events",
+              "TypeScript plugins for Solana Agent Kit and elizaOS",
+              "Reference Rust prover server, fully open source"
             ]}
           />
-          
+
           <IntegrationCard
             icon={<Users className="h-5 w-5" />}
-            title="For Users"
+            title="For agent operators"
             items={[
-              "Web dashboard (no wallet required for viewing)",
-              "Phantom/Solflare wallet connect (coming soon)",
-              "Mobile-responsive design",
-              "Real-time notifications"
+              "Drop-in headless agent template",
+              "Configurable tick loop for autonomous behaviour",
+              "Web dashboard for live audit trail",
+              "Run on your own GPUs or via the hosted prover (planned)"
             ]}
           />
         </div>
@@ -139,38 +137,37 @@ export default function DocsPage() {
       {/* Roadmap */}
       <section>
         <h2 className="text-3xl font-normal">Roadmap</h2>
-        
+
         <div className="mt-8 space-y-8">
           <RoadmapSection
-            title="Current (MVP)"
+            title="Live today"
             icon="✅"
             items={[
               "BitNet b1.58 2B4T inference",
-              "30-layer Groth16 proofs",
-              "Solana devnet deployment",
-              "Real-time dashboard"
+              "30-layer ZK proof on Solana devnet",
+              "Verify-then-execute gate program",
+              "Real-time dashboard with full audit trail"
             ]}
           />
-          
+
           <RoadmapSection
-            title="Coming Soon"
+            title="Next"
             icon="🔄"
             items={[
-              "Mainnet deployment",
-              "Wallet integration (Phantom/Solflare)",
-              "Multi-agent support",
-              "Reputation scoring system"
+              "Jupiter swap as the gated action",
+              "100-bit security as default profile",
+              "Mainnet deployment after audit",
+              "Aggregated proof: 30 layers into 1"
             ]}
           />
-          
+
           <RoadmapSection
-            title="Future"
+            title="Exploring"
             icon="📋"
             items={[
-              "Cumulative proof method (single proof)",
-              "Multi-prover network",
-              "Custom agent training",
-              "Cross-chain support"
+              "Convert any pretrained LLM into a ZK-provable BitNet variant",
+              "Decentralised prover network",
+              "Cross-chain settlement on Ethereum L2s"
             ]}
           />
         </div>
@@ -179,35 +176,33 @@ export default function DocsPage() {
       {/* Pricing */}
       <section>
         <h2 className="text-3xl font-normal">Pricing</h2>
-        
+
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           <PricingCard
-            tier="Free"
+            tier="Self-hosted"
             items={[
-              "View all public proofs",
-              "Dashboard access",
-              "API read access"
+              "Open source, Apache-2.0",
+              "Run your own prover stack",
+              "Pay only Solana fees (~$0.005 per verified action)"
             ]}
           />
-          
+
           <PricingCard
-            tier="Pro"
+            tier="Hosted (planned)"
             items={[
-              "Deploy your own agent",
-              "Custom inference triggers",
-              "Priority proof generation",
-              "Advanced analytics"
+              "Managed prover infrastructure",
+              "No GPU operations on your side",
+              "Pricing announced after mainnet audit"
             ]}
             highlighted
           />
-          
+
           <PricingCard
-            tier="Enterprise"
+            tier="Enterprise (planned)"
             items={[
+              "Dedicated prover capacity",
               "White-label dashboard",
-              "Dedicated prover infrastructure",
-              "Custom model training",
-              "SLA guarantees"
+              "Custom downstream integrations"
             ]}
           />
         </div>
@@ -216,26 +211,31 @@ export default function DocsPage() {
       {/* FAQ */}
       <section>
         <h2 className="text-3xl font-normal">Frequently Asked Questions</h2>
-        
+
         <div className="mt-8 space-y-6">
           <FAQItem
-            question="How is this different from regular AI agents?"
-            answer="Every decision is cryptographically proven. You can verify the exact neural network computation that led to each action."
+            question="What does VaultBot actually prove?"
+            answer="That a specific BitNet model produced a specific decision from a specific input. Not that the decision is correct — that the inference happened as claimed. Math, not promises."
           />
-          
+
           <FAQItem
-            question="What happens if a proof fails?"
-            answer="The swap never executes. VaultBot is proof-first: verify THEN execute."
+            question="What gets executed when a proof verifies?"
+            answer="Today: a tiny self-transfer that demonstrates the gate works. The architecture is generic — Jupiter swaps, governance votes, transfers, or any Solana CPI can plug in as the downstream action."
           />
-          
+
           <FAQItem
-            question="Can I audit past decisions?"
-            answer="Yes! Every proof is permanently stored on Solana. Click any action to see the full 30-layer verification trail."
+            question="What if a proof fails?"
+            answer="The downstream action never fires. The gate program rejects any mismatch, atomically."
           />
-          
+
           <FAQItem
-            question="How much does it cost?"
-            answer="Viewing is free. Running your own agent requires SOL for transaction fees (~0.01 SOL per action)."
+            question="Why BitNet specifically?"
+            answer="Ternary weights make the proof ~3× cheaper than a normal floating-point neural network. BitNet is one of the few production LLMs where ZK proving at this scale is even tractable."
+          />
+
+          <FAQItem
+            question="Why Solana?"
+            answer="Solana ships a native BN254 pairing precompile with enough compute budget per transaction to verify a Groth16 proof in one shot. Most chains can't."
           />
         </div>
       </section>
